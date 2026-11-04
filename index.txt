@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inazuma Eleven SD</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <h1>⚡ INAZUMA ELEVEN SD</h1>
+  <div id="currency">💰 1000</div>
+</header>
+<nav>
+  <button data-page="home">Inicio</button>
+  <button data-page="collection">Figuras</button>
+  <button data-page="team">Equipo</button>
+  <button data-page="recruitment">Fichajes</button>
+  <button data-page="match">Partidos</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+  <div class="panel hero">
+    <h2>¡Bienvenido, entrenador!</h2>
+    <p>Construye tu equipo, consigue figuras y conquista el fútbol.</p>
+  </div>
+  <div class="stats">
+    <div class="panel">Figuras<strong id="totalFigures">0</strong></div>
+    <div class="panel">Nivel<strong id="level">1</strong></div>
+    <div class="panel">Victorias<strong id="wins">0</strong></div>
+  </div>
+  <div class="panel">
+    <h2>Actividad</h2>
+    <div id="activity">Tu aventura comienza ahora.</div>
+  </div>
+</section>
+
+<section id="collection" class="page">
+  <div class="panel">
+    <h2>📚 Álbum de figuras</h2>
+    <div class="filters">
+      <select id="rarityFilter">
+        <option value="all">Todas las rarezas</option>
+        <option value="S">S - Legendaria</option>
+        <option value="A">A - Épica</option>
+        <option value="B">B - Rara</option>
+        <option value="C">C - Normal</option>
+      </select>
+      <input id="searchFigure" placeholder="Buscar personaje...">
+    </div>
+    <div id="collectionGrid" class="grid"></div>
+  </div>
+</section>
+
+<section id="team" class="page">
+  <div class="panel">
+    <h2>⚽ Mi equipo titular</h2>
+    <p>Selecciona tus once figuras desde el álbum.</p>
+    <div id="teamGrid" class="grid"></div>
+    <div id="teamPower"></div>
+  </div>
+</section>
+
+<section id="recruitment" class="page">
+  <div class="panel">
+    <h2>🎁 Centro de fichajes</h2>
+    <p>Abre sobres para conseguir nuevas figuras.</p>
+    <div class="packGrid">
+      <button onclick="Recruitment.open('bronze')">🥉 Sobre bronce<br>100 monedas</button>
+      <button onclick="Recruitment.open('silver')">🥈 Sobre plata<br>300 monedas</button>
+      <button onclick="Recruitment.open('gold')">🥇 Sobre oro<br>700 monedas</button>
+      <button onclick="Recruitment.open('legend')">✨ Sobre especial<br>1500 monedas</button>
+    </div>
+    <div id="packResult"></div>
+  </div>
+</section>
+
+<section id="match" class="page">
+  <div class="panel">
+    <h2>🏟️ Estadio</h2>
+    <div class="scoreboard">
+      <span>RAIMON</span>
+      <strong id="score">0 - 0</strong>
+      <span>RIVALES</span>
+    </div>
+    <canvas id="stadium" width="900" height="560"></canvas>
+    <div class="matchInfo">
+      <span id="matchClock">00:00</span>
+      <span id="matchStatus">Preparado</span>
+    </div>
+    <div class="controls">
+      <button id="startMatch">▶ Comenzar partido</button>
+      <button id="pauseMatch">Ⅱ Pausar</button>
+      <button id="specialMove" disabled>⚡ Técnica especial</button>
+    </div>
+    <div id="matchLog" class="log">Esperando el comienzo del partido.</div>
+  </div>
+</section>
+</main>
+
+<script src="js/database.js"></script>
+<script src="js/collection.js"></script>
+<script src="js/recruitment.js"></script>
+<script src="js/match.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
