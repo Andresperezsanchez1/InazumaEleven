@@ -67,7 +67,7 @@ const EXTRA_STORY_CHARACTERS = [
   {id:"chrono-alpha",name:"Alpha",team:"Protocolo Omega",role:"DEL",rating:91,techName:"TIRO ROTATIVO",techType:"TIRO",emoji:"🌀"},
   {id:"chrono-beta",name:"Beta",team:"Protocolo Omega",role:"MC",rating:89,techName:"DISPARO DOBLE",techType:"TIRO",emoji:"🔮"},
   {id:"chrono-gamma",name:"Gamma",team:"Protocolo Omega",role:"DEL",rating:91,techName:"GIRO ATOMICO",techType:"TIRO",emoji:"🔮"},
-  {id:"go-michael",name:"Michael Ballzack",team:"Raimon GO",role:"DEL",rating:84,techName:"CASCABEL",techType:"TYRO",emoji:"🐉"},
+  {id:"go-michael",name:"Michael Ballzack",team:"Raimon GO",role:"DEL",rating:84,techName:"CASCABEL",techType:"TIRO",emoji:"🐉"},
   {id:"chrono-tezcat",name:"Tezcat",team:"Raimon GO Chrono Stone",role:"DEL",rating:94,techName:"CENIZA NEGRA",techType:"TIRO",emoji:"🐆"},
   // GO Galaxy: Earth Eleven y sus figuras más conocidas.
 
