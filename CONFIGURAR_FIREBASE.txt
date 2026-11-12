@@ -1,0 +1,48 @@
+INAZUMA ELEVEN - PRIMERA FASE DE CUENTAS Y GUARDADO EN LA NUBE
+
+QUÉ INCLUYE
+- Registro e inicio de sesión con correo y contraseña.
+- Inicio de sesión con Google.
+- Recuperación de contraseña por correo.
+- No existe modo invitado: el juego solo carga tras autenticar una cuenta.
+- Cada cuenta guarda su propio equipo, monedas, tickets y progreso en Firestore.
+- Si este navegador tenía una carrera antigua en localStorage (inazumaCareerV2),
+  se intenta importar a la primera cuenta que inicie sesión en ese navegador.
+- El juego actual, los personajes, imágenes, técnicas, controles y colores de nombres
+  se conservan. Se carga la versión actual de game.js con los nombres del equipo
+  en azul oscuro y los rivales en rojo, ambos con borde blanco.
+
+PASO 1 - CREAR / ABRIR PROYECTO FIREBASE
+1. Entra en https://console.firebase.google.com/ y crea un proyecto para Inazuma Eleven
+   (o selecciona uno que quieras dedicar a este juego).
+2. En el resumen del proyecto pulsa Añadir aplicación > Web (</>).
+3. Registra la aplicación y copia el objeto de configuración firebaseConfig.
+4. Abre firebase-config.js y sustituye los seis valores PEGA_AQUI... por los valores
+   exactos que te entrega Firebase. No cambies los nombres de las propiedades.
+
+PASO 2 - ACTIVAR LOS MÉTODOS DE ACCESO
+1. Firebase Console > Authentication > Comenzar.
+2. En Proveedores de acceso, activa Correo electrónico/contraseña.
+3. Activa Google y guarda los cambios.
+4. En Authentication > Configuración > Dominios autorizados, añade el dominio
+   de tu GitHub Pages (solo el dominio, por ejemplo usuario.github.io; no añadas la ruta).
+
+PASO 3 - CREAR LA BASE DE DATOS
+1. Firebase Console > Firestore Database > Crear base de datos.
+2. Puedes elegir producción; después abre la pestaña Reglas.
+3. Copia el contenido de firestore.rules y publícalo.
+   Estas reglas impiden que un usuario lea o modifique la partida de otra cuenta.
+
+PASO 4 - PUBLICAR
+Sube los archivos del ZIP a la misma carpeta de tu web de GitHub Pages, sustituyendo
+index.html, style.css y game.js y añadiendo auth.js, firebase-config.js y firestore.rules.
+Mantén characters.js, team.js, gacha.js y la carpeta assets tal como están.
+
+IMPORTANTE
+- No subas contraseñas ni claves privadas. La configuración web de Firebase identifica
+  el proyecto y está diseñada para estar en el cliente; la protección real de los datos
+  la hacen Authentication y las reglas de Firestore.
+- No borres tu almacenamiento del navegador hasta verificar que tu cuenta ya recupera
+  la plantilla correcta desde la nube.
+- La sincronización de la plantilla está preparada, pero esta primera fase no incorpora
+  todavía partidas JcJ en tiempo real. Eso será la siguiente fase.
