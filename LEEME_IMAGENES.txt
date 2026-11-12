@@ -1,8 +1,0 @@
-IMÁGENES WEBP DEL JUEGO
-
-Esta versión utiliza tus imágenes WEBP de la carpeta assets/players/new como sprites y retratos.
-Se han eliminado las rutas y los fallbacks a PNG para que no se mezclen con tus WEBP.
-
-Si un personaje no tiene una imagen WEBP asociada en el ZIP, el partido mantiene su figura dibujada y la gestión de equipo muestra su emoji. No se sustituye por un PNG.
-
-Para ejecutar: descomprime el ZIP completo y abre index.html. Mantén la carpeta assets junto a los archivos JS.
