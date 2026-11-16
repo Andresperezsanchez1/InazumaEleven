@@ -7,5 +7,6 @@ export const firebaseConfig = {
   storageBucket: "inazumaeleven-d5fd2.firebasestorage.app",
   messagingSenderId: "398353575588",
   appId: "1:398353575588:web:ddd10f79fadb663f084031",
-  measurementId: "G-VNDXYE3CH1"
+  measurementId: "G-VNDXYE3CH1",
+  databaseURL: "https://inazumaeleven-d5fd2-default-rtdb.europe-west1.firebasedatabase.app"
 };
