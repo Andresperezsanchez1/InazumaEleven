@@ -1,3 +1,4 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
@@ -7,11 +8,18 @@ import {
 import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
+import {
+  getDatabase
+} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-database.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const realtimeDb = getDatabase(app);
+
+window.__firebaseRtdb = realtimeDb;
+
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
@@ -24,10 +32,12 @@ const messageEl = document.getElementById("authMessage");
 const submitBtn = document.getElementById("authSubmit");
 const loginTab = document.getElementById("authLoginTab");
 const registerTab = document.getElementById("authRegisterTab");
+
 let isRegisterMode = false;
 let currentUser = null;
 window.__firebaseDb = db;
 window.__getFirebaseUser = () => currentUser;
+
 let saveTimer = null;
 let lastSavedJson = "";
 
@@ -35,6 +45,7 @@ function showMessage(message, success = false) {
   messageEl.textContent = message;
   messageEl.classList.toggle("success", success);
 }
+
 function friendlyError(error) {
   const code = error?.code || "";
   const messages = {
@@ -51,6 +62,7 @@ function friendlyError(error) {
   };
   return messages[code] || "No se pudo completar la operación. Revisa la configuración de Firebase e inténtalo otra vez.";
 }
+
 function setMode(register) {
   isRegisterMode = register;
   loginTab.classList.toggle("selected", !register);
@@ -59,6 +71,7 @@ function setMode(register) {
   passwordInput.autocomplete = register ? "new-password" : "current-password";
   showMessage("");
 }
+
 loginTab.addEventListener("click", () => setMode(false));
 registerTab.addEventListener("click", () => setMode(true));
 
@@ -68,9 +81,13 @@ form.addEventListener("submit", async (event) => {
   const password = passwordInput.value;
   submitBtn.disabled = true;
   showMessage(isRegisterMode ? "Creando tu cuenta…" : "Iniciando sesión…");
+
   try {
-    if (isRegisterMode) await createUserWithEmailAndPassword(auth, email, password);
-    else await signInWithEmailAndPassword(auth, email, password);
+    if (isRegisterMode) {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
   } catch (error) {
     showMessage(friendlyError(error));
   } finally {
@@ -80,24 +97,39 @@ form.addEventListener("submit", async (event) => {
 
 document.getElementById("authGoogle").addEventListener("click", async () => {
   showMessage("Conectando con Google…");
-  try { await signInWithPopup(auth, googleProvider); }
-  catch (error) { showMessage(friendlyError(error)); }
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {
+    showMessage(friendlyError(error));
+  }
 });
 
 document.getElementById("authReset").addEventListener("click", async () => {
   const email = emailInput.value.trim();
-  if (!email) { showMessage("Escribe tu correo y vuelve a pulsar para recibir el enlace de recuperación."); emailInput.focus(); return; }
+
+  if (!email) {
+    showMessage("Escribe tu correo y vuelve a pulsar para recibir el enlace de recuperación.");
+    emailInput.focus();
+    return;
+  }
+
   try {
     await sendPasswordResetEmail(auth, email);
     showMessage("Te hemos enviado un correo para restablecer la contraseña.", true);
-  } catch (error) { showMessage(friendlyError(error)); }
+  } catch (error) {
+    showMessage(friendlyError(error));
+  }
 });
 
-// Se puede llamar desde el menú del juego si se añade un botón de cerrar sesión.
 window.inazumaSignOut = () => signOut(auth);
+
 document.getElementById("logoutBtn")?.addEventListener("click", async () => {
   if (confirm("¿Quieres cerrar sesión? Tu progreso ya está sincronizado en la nube.")) {
-    try { await signOut(auth); } catch (error) { console.error(error); }
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
   }
 });
 
@@ -109,6 +141,7 @@ function showGame(user) {
   document.body.classList.add("authenticated");
   window.dispatchEvent(new Event("resize"));
 }
+
 function showLogin() {
   currentUser = null;
   gameApp.classList.add("auth-locked");
@@ -117,8 +150,6 @@ function showLogin() {
 }
 
 function isBrandNewAccount(user) {
-  // Firebase asigna la misma fecha de creación y último acceso al primer acceso
-  // de una cuenta nueva (incluido el primer acceso mediante Google).
   const created = user?.metadata?.creationTime;
   const lastSignIn = user?.metadata?.lastSignInTime;
   return Boolean(created && lastSignIn && created === lastSignIn);
@@ -127,45 +158,66 @@ function isBrandNewAccount(user) {
 async function loadCloudCareer(user) {
   const ref = doc(db, "players", user.uid);
   const snapshot = await getDoc(ref);
+
   if (snapshot.exists() && snapshot.data()?.career) {
     const cloudCareer = snapshot.data().career;
+
     if (typeof window.__applyCareerSnapshot === "function") {
       window.__applyCareerSnapshot(cloudCareer);
       lastSavedJson = JSON.stringify(cloudCareer);
     }
-  } else if (isBrandNewAccount(user) && typeof window.__createFreshCareerSnapshot === "function") {
-    // Una cuenta recién creada empieza limpia: nunca hereda todos los personajes
-    // que pudieran existir en el almacenamiento local de ese móvil/ordenador.
+  } else if (
+    isBrandNewAccount(user) &&
+    typeof window.__createFreshCareerSnapshot === "function"
+  ) {
     const starterCareer = window.__createFreshCareerSnapshot();
+
     await setDoc(ref, {
       career: starterCareer,
       email: user.email || null,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
+
     lastSavedJson = JSON.stringify(starterCareer);
   } else {
-    // Para cuentas antiguas sin documento, conserva su partida local existente.
-    const localCareer = typeof window.__getCareerSnapshot === "function" ? window.__getCareerSnapshot() : null;
-    if (localCareer) await setDoc(ref, { career: localCareer, email: user.email || null, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    const localCareer =
+      typeof window.__getCareerSnapshot === "function"
+        ? window.__getCareerSnapshot()
+        : null;
+
+    if (localCareer) {
+      await setDoc(ref, {
+        career: localCareer,
+        email: user.email || null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
     lastSavedJson = JSON.stringify(localCareer || {});
   }
 }
 
 window.__firebaseSaveCareer = (careerData) => {
   if (!currentUser || !careerData) return;
+
   const json = JSON.stringify(careerData);
   if (json === lastSavedJson) return;
+
   clearTimeout(saveTimer);
+
   saveTimer = setTimeout(async () => {
     const userAtStart = currentUser;
     if (!userAtStart) return;
+
     try {
       await setDoc(doc(db, "players", userAtStart.uid), {
         career: careerData,
         email: userAtStart.email || null,
         updatedAt: serverTimestamp()
       }, { merge: true });
+
       lastSavedJson = json;
     } catch (error) {
       console.error("No se pudo guardar la partida en Firestore:", error);
@@ -175,13 +227,23 @@ window.__firebaseSaveCareer = (careerData) => {
 };
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { showLogin(); return; }
+  if (!user) {
+    showLogin();
+    return;
+  }
+
   showGame(user);
   showMessage("Cargando tu equipo…");
+
   try {
     await loadCloudCareer(user);
     showMessage(`Sesión iniciada: ${user.email || "Google"}`, true);
-    setTimeout(() => { if (messageEl.textContent.startsWith("Sesión iniciada:")) showMessage(""); }, 3500);
+
+    setTimeout(() => {
+      if (messageEl.textContent.startsWith("Sesión iniciada:")) {
+        showMessage("");
+      }
+    }, 3500);
   } catch (error) {
     console.error("Error cargando la partida:", error);
     showMessage("Has iniciado sesión, pero no se pudo cargar Firestore. Revisa las reglas de seguridad.");
