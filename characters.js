@@ -26,7 +26,6 @@ const ORIGINAL_DATABASE = [
   {name:"Erik Eagle",role:"MC",rating:82,color:"#c75c42",hair:"#9c633c",speed:1.9,shot:79,emoji:"🦅",techName:"TRIPEGASO",techType:"TIRO",pt:100,maxPt:100,ptCost:38},
   // Royal Academy
   {name:"Seymour Hillman",role:"POR",rating:84,color:"#8c8caa",hair:"#443b55",speed:1.4,shot:48,emoji:"🧤",techName:"MANO CELESTIAL",techType:"PARADA",pt:110,maxPt:110,ptCost:35},
-  {name:"King",role:"DEL",rating:86,color:"#7e57c2",hair:"#d8c7a5",speed:1.9,shot:88,emoji:"👑",techName:"LANZA DEL REY",techType:"TIRO",pt:115,maxPt:115,ptCost:45},
   // Zeus
   {name:"Poseidon",role:"POR",rating:86,color:"#a82e50",hair:"#271b2b",speed:1.4,shot:50,emoji:"🌊",techName:"MURALLA GIGANTE",techType:"PARADA",pt:115,maxPt:115,ptCost:40},
   {name:"Aphrodite",role:"DEL",rating:91,color:"#e5c7ed",hair:"#e6d8e9",speed:2.0,shot:94,emoji:"✨",techName:"SABIDURÍA DIVINA",techType:"TIRO",pt:130,maxPt:130,ptCost:50},
